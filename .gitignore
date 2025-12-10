@@ -1,0 +1,86 @@
+# ============================
+# Python
+# ============================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribuição / Pacotes
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environment
+venv/
+.env/
+.venv/
+ENV/
+
+# Arquivos temporários
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Configurações locais
+local_settings.py
+
+# ============================
+# VSCode
+# ============================
+.vscode/
+.settings/
+
+# ============================
+# SO / Sistema Operacional
+# ============================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# ============================
+# Ferramentas de IA
+# ============================
+# GitHub Copilot
+copilot-instructions.md
+
+# ============================
+# Arquivos pessoais / segredos
+# ============================
+*.env
+*.key
+*.pem
+*.json
+
+# ============================
+# Pip / Dependências
+# ============================
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ============================
+# PyInstaller
+# ============================
+*.manifest
+*.spec
+
+# ============================
+# Testes
+# ============================
+.coverage
+.tox/
+nose2-junit.xml
+.pytest_cache/
