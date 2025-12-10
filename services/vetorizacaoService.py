@@ -2,12 +2,15 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from services.datasetService import dataset_completo
 from sklearn.preprocessing import LabelEncoder
 
-def vetorizacao():
+def vetorizador():
     vectorizer = TfidfVectorizer()
-    
     df = dataset_completo()
     X = df['sintomas'].astype(str)
     vectorizer.fit(X)
+    return vectorizer, X
+
+def vetorizacao():
+    vectorizer, X = vetorizador()
     X_transform = vectorizer.transform(X)
     return X_transform
 
