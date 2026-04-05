@@ -17,6 +17,10 @@ venv/
 .venv/
 ENV/
 
+# Ferramentas de IA
+.claude/
+copilot-instructions.md/
+
 # Arquivos temporários
 *.log
 *.tmp
@@ -75,6 +79,12 @@ pip-delete-this-directory.txt
 # ============================
 *.manifest
 *.spec
+
+# ============================
+# Modelos treinados
+# ============================
+model/*.pkl
+model/*.json
 
 # ============================
 # Testes
