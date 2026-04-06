@@ -2,8 +2,8 @@ import logging
 from pathlib import Path
 from typing import Any
 
-import joblib
 import xgboost as xgb
+from joblib import load
 
 logger = logging.getLogger(__name__)
 
@@ -27,15 +27,14 @@ class DiagnosticoService:
                 )
 
         logger.info("Loading XGBoost model from %s", model_path)
-        self.health_ai = xgb.XGBClassifier()
-        self.health_ai.load_model(str(model_path))
+        self.booster = xgb.Booster()
+        self.booster.load_model(str(model_path))
 
         logger.info("Loading vectorizer from %s", vectorizer_path)
-        vectorizer_obj = joblib.load(str(vectorizer_path))
-        self.vectorizer = vectorizer_obj[0] if isinstance(vectorizer_obj, tuple) else vectorizer_obj
+        self.vectorizer = load(str(vectorizer_path))
 
         logger.info("Loading label encoder from %s", encoder_path)
-        self.label_encoder = joblib.load(str(encoder_path))
+        self.label_encoder = load(str(encoder_path))
 
         logger.info("DiagnosticoService initialized successfully")
 
@@ -46,11 +45,13 @@ class DiagnosticoService:
             sintomas_str = sintomas
 
         sintomas_transformed = self.vectorizer.transform([sintomas_str])
-        predicao_encoded = self.health_ai.predict(sintomas_transformed)
+        dmatrix = xgb.DMatrix(sintomas_transformed)
+        pred_encoded = self.booster.predict(dmatrix)
+        pred_index = int(pred_encoded[0])
 
         pred_decoded = (
-            self.label_encoder.classes_[int(predicao_encoded[0])]
+            self.label_encoder.classes_[pred_index]
             if hasattr(self.label_encoder, "classes_")
-            else str(predicao_encoded[0])
+            else str(pred_index)
         )
         return {"diagnostico": pred_decoded}
