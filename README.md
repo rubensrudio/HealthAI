@@ -67,4 +67,4 @@ HealthAI/
 
 ## License
 
-Private. All rights reserved.
+MIT.

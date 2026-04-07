@@ -19,6 +19,7 @@ ENV/
 
 # Ferramentas de IA
 .claude/
+.github/
 copilot-instructions.md/
 
 # Arquivos temporários
