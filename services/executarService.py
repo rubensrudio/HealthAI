@@ -2,8 +2,12 @@ import logging
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import xgboost as xgb
 from joblib import load
+from sklearn.preprocessing import LabelEncoder
+
+from services.datasetService import dataset_completo
 
 logger = logging.getLogger(__name__)
 
@@ -31,10 +35,18 @@ class DiagnosticoService:
         self.booster.load_model(str(model_path))
 
         logger.info("Loading vectorizer from %s", vectorizer_path)
-        self.vectorizer = load(str(vectorizer_path))
+        vectorizer_loaded = load(str(vectorizer_path))
+        if isinstance(vectorizer_loaded, tuple):
+            vectorizer_loaded = vectorizer_loaded[0]
+        self.vectorizer = vectorizer_loaded
 
         logger.info("Loading label encoder from %s", encoder_path)
-        self.label_encoder = load(str(encoder_path))
+        encoder_data = load(str(encoder_path))
+        # Reconstruct the LabelEncoder with the same class ordering used during training
+        df = dataset_completo()
+        le = LabelEncoder()
+        le.fit(df["diagnostico"].astype(str))
+        self.label_encoder = le
 
         logger.info("DiagnosticoService initialized successfully")
 
@@ -47,11 +59,10 @@ class DiagnosticoService:
         sintomas_transformed = self.vectorizer.transform([sintomas_str])
         dmatrix = xgb.DMatrix(sintomas_transformed)
         pred_encoded = self.booster.predict(dmatrix)
-        pred_index = int(pred_encoded[0])
+        if pred_encoded.ndim > 1:
+            pred_index = int(pred_encoded[0].argmax())
+        else:
+            pred_index = int(round(pred_encoded[0]))
 
-        pred_decoded = (
-            self.label_encoder.classes_[pred_index]
-            if hasattr(self.label_encoder, "classes_")
-            else str(pred_index)
-        )
+        pred_decoded = self.label_encoder.classes_[pred_index]
         return {"diagnostico": pred_decoded}
